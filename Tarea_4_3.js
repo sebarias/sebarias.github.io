@@ -4,70 +4,29 @@ var contador;
 var cicle;
 var input;
 var output;
+var mic;
+var VELOCITY;
 
 
 function setup(){
-  createCanvas(windowWidth,windowHeight);
+  createCanvas(600,600);
   background(20);
   t = 0;
   NUM_LINES = 100;
+  VELOCITY = 0.1;
   randomSeed(5);
   contador = 0;
   cicle = 0;
+  mic = new p5.AudioIn()
+  mic.start();
 
   //noLoop();
 }
 
 function draw(){
   background(20);
-
-  strokeWeight(0.5);
-  translate(width / 2,height / 2);
-  fill(150,0,0);
-  //console.log(frameCount);
-
-  for(var i = 0; i < NUM_LINES; i++){
-    //fill(random(150, 190));
-    var size = 1;
-    stroke(255,150,360);
-    line(x1(t + i),y1(t + i),x2(t + i) * size,y2(t + i) * size);
-    stroke(0,150,360);
-    line(x1((t + i) * -1 ),y1((t + i) * -1),x2((t + i) * -1) * size ,y2((t + i) * -1) * size);
-    if (cicle % 2 == 0 && cicle > 0){
-      rotate(HALF_PI);
-      stroke(255,150,360);
-      line(x1(t + i),y1(t + i),x2(t + i) * size,y2(t + i) * size);
-      stroke(0,150,360);
-      line(x1((t + i) * -1 ),y1((t + i) * -1),x2((t + i) * -1) * size,y2((t + i) * -1) * size);
-    }
-
-  }
-
-  if (contador > 200){
-    t += 0.1; // velocidad del movimiento
-  }
-  if (contador <= 200){
-    t += 0.5;
-  }
-  if (contador > 300){
-    t += 0.12;
-  }
-  if (contador > 350){
-    t += 0.15;
-  }
-  if (contador > 400){
-    t += 0.17;
-  }
-  if (contador > 450){
-    t += 0.19;
-  }
-  if(contador == 500){
-    contador = 0
-    cicle ++;
-  }else {
-    contador ++;
-  }
-
+  micLevel = mic.getLevel();
+  t = drawLines(micLevel, t, 1);
 }
 
 function x1(t){
@@ -87,13 +46,29 @@ function y2(t){
   return -cos(t / 20) * 200 + cos(t / 12) * 20;
 }
 
-WebMidi.enable(function (err) {
+function drawLines(micLevel, t, grosor){
+  strokeWeight(grosor);
+  translate(width / 2,height / 2);
 
-  if (err) console.log("An error occurred", err);
+  for(var i = 0; i < NUM_LINES; i++){
+    var size = map(micLevel,0,1,1,50);
 
-  WebMidi.inputs[0].addListener('pitchbend', "all", function(e) {
-    console.log("Pitch value: " + e.value);
-  });
+    drawPinkLine(i, t, size);
+    drawBlueLine(i, t, size);
+    rotate(HALF_PI);
+    drawPinkLine(i, t, size);
+    drawBlueLine(i, t, size);
+}
+  return t += VELOCITY;
+  rotate(HALF_PI * t);
+}
 
+function drawPinkLine(i, t, size){
+  stroke(200  * size, 150  * size, 360  * size);
+  line(x1(t + i),y1(t + i),x2(t + i) * size,y2(t + i) * size);
+}
 
-});
+function drawBlueLine(i, t, size){
+  stroke(0,150,360 * size);
+  line(x1((t + i) * -1 ),y1((t + i) * -1),x2((t + i) * -1) * size ,y2((t + i) * -1) * size);
+}

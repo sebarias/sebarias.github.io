@@ -8,6 +8,13 @@ var mic;
 var VELOCITY;
 var sw;
 var xoff = 0;
+var threshold = 0.1;
+var inc = 0.5; // nivel de random en noise.
+var scl = 7;
+var cols,rows;
+var zoff = 0;
+var limit = 15;
+
 
 function setup(){
   createCanvas(600,600);
@@ -24,17 +31,32 @@ function setup(){
   fft.setInput(mic);
   //noLoop();
   sw = 0;
+  //variables para pintura abstacta.
+  cols = floor( width / scl);
+  rows = floor (height / scl);
+  //colorMode(HSB,100);
+  //frameRate(20);
 }
 
 function draw(){
-  background(20);
+  //background(0);
   micLevel = mic.getLevel();
-  if(micLevel > 0.7 || sw == 1){
-    sw = 1;
-    xoff = drawCircles(micLevel, xoff);
-  }else{
-    t = drawLines(micLevel, t, 1);
+
+
+  if(sw > limit){
+    drawAbstractPaint(rows,cols,inc,scl);
   }
+  else{
+    if(micLevel > threshold){
+      sw ++;
+      console.log(sw);
+    }else{
+      sw =0;
+
+    }
+    t = drawLines(micLevel, t, 0.5);
+  }
+  contador ++;
 
 }
 
@@ -56,21 +78,33 @@ function y2(t){
 }
 
 function drawLines(micLevel, t, grosor){
+  background(0);
   strokeWeight(grosor);
   translate(width / 2,height / 2);
 
+  if(micLevel > 0.12){
+    go_crazy = true;
+  }
+
   for(var i = 0; i < NUM_LINES; i++){
     //escala el valor del volumen del mic a una proporción de 1 a 5
-    var size = map(micLevel,0.1,1,1,5);
+    var size = map(micLevel,0.1,1,1,10);
 
     drawPinkLine(i, t, size);
     drawBlueLine(i, t, size);
     rotate(HALF_PI);
     drawPinkLine(i, t, size);
     drawBlueLine(i, t, size);
-}
+    rotate(HALF_PI);
+    drawPinkLine(i, t, size*0.2);
+    drawBlueLine(i, t, size*0.2);
+    rotate(HALF_PI);
+    drawPinkLine(i, t, size*0.2);
+    drawBlueLine(i, t, size*0.2);
+  }
+
   return t += VELOCITY;
-  //rotate(HALF_PI * t);
+  //
 }
 
 function drawPinkLine(i, t, size){
@@ -84,18 +118,46 @@ function drawBlueLine(i, t, size){
 }
 
 //dibujo circules
-function drawCircles(micLevel, xoff){
-    var x = map(noise(xoff),0,1,0,width);
-    var y = map(noise(micLevel),0,1,0,height);
-    fill(255);
-    ellipse(x, y, 100, 100);
-    //velocity of movement circle
-    return xoff += 0.01;
+function drawCircles(micLevel, xoff, evol){
+  var x = map(noise(xoff),0,1,0,width);
+  var y = map(micLevel,0,1,height,0);
+  console.log(y);
+  fill(random(255),random(255),random(255));
+  ellipse(x, y - 100/2, map(micLevel,0,1,100,300), map(micLevel,0,1,100,300));
+  //velocity of movement circle
+  return xoff += 0.01;
 }
-/*
-  Capitulo Uno
-  - Grita Lo mas fuerte que puedas, sólo así abriras el portal.
-*/
-function chapterOne(){
-  var titulo = "Capitulo Uno";
+
+function drawObjective(){
+  fill(255,0,0);
+  ellipse(width/2, height/2 - 100/2, 150, 150);
+}
+
+
+function drawAbstractPaint(){
+  //noiseDetail(2, 0.2);
+
+  var yoff = 0
+  for(var y = 0; y < rows; y++){
+    var coff = 0;
+    for (var x = 0; x < cols; x++) {
+      //en cada bloque se dibujará un vector con angulo.
+      var index = (x + y * width) * 4;
+      var angle = noise(coff, yoff, zoff) * TWO_PI;
+      var v = p5.Vector.fromAngle(angle);
+      xoff += inc;
+      strokeWeight(0.1);
+      stroke(map(noise(coff),0,1,0,255),map(noise(yoff),0,1,0,255),map(noise(zoff),0,1,0,255));
+      //stroke(map(random(xoff),0,1,0,255),map(random(yoff),0,1,0,255),map(random(zoff),0,1,0,255),random(50,100));
+      //push();
+      translate(x * scl, y * scl);
+      rotate(v.heading());
+      line(0, 0, scl * 20, 0);
+      //pop();
+    }
+    yoff += inc;
+
+    zoff += 0.001;  // velocidad de movimiento de los vectores.
+    //t = drawLines(micLevel, t, 0.5);
+  }
 }

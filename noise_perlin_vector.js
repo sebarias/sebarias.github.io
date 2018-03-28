@@ -10,7 +10,7 @@ function setup(){
   cols = floor( width / scl);
   rows = floor (height / scl);
   fr = createP('');
-  background(0,255,0,0);
+  background(255);
 }
 
 function draw(){
@@ -26,7 +26,8 @@ function draw(){
       var v = p5.Vector.fromAngle(angle);
       xoff += inc;
       strokeWeight(0.1);
-      stroke(map(noise(xoff),0,1,0,255),map(noise(yoff),0,1,0,255),map(noise(zoff),0,1,0,255),50);
+      stroke(map(noise(xoff),0,1,0,255),map(noise(yoff),0,1,0,255),map(noise(zoff),0,1,0,255));
+      //stroke(map(random(xoff),0,1,0,255),map(random(yoff),0,1,0,255),map(random(zoff),0,1,0,255),random(50,100));
       //push();
       translate(x * scl, y * scl);
       rotate(v.heading());

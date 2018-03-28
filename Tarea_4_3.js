@@ -8,12 +8,13 @@ var mic;
 var VELOCITY;
 var sw;
 var xoff = 0;
-var threshold = 0.1;
+var threshold = 0.5;
 var inc = 0.5; // nivel de random en noise.
 var scl = 7;
 var cols,rows;
 var zoff = 0;
 var limit = 15;
+var litle_factor = 0.1;
 
 
 function setup(){
@@ -52,29 +53,11 @@ function draw(){
       console.log(sw);
     }else{
       sw =0;
-
     }
     t = drawLines(micLevel, t, 0.5);
   }
   contador ++;
 
-}
-
-function x1(t){
-  return sin(t /10) * 100 + sin(t / 5) * 20;
-}
-
-function y1(t){
-  return cos(-t / 10) * 10 + sin(t / 5) * 50;
-}
-
-function x2(t){
-  //return sin(t / 10) * 200  + sin(t)* 2;
-  return sin(t / 10) * 200  + sin(t)* 20;
-}
-
-function y2(t){
-  return -cos(t / 20) * 200 + cos(t / 12) * 20;
 }
 
 function drawLines(micLevel, t, grosor){
@@ -88,7 +71,7 @@ function drawLines(micLevel, t, grosor){
 
   for(var i = 0; i < NUM_LINES; i++){
     //escala el valor del volumen del mic a una proporción de 1 a 5
-    var size = map(micLevel,0.1,1,1,10);
+    var size = map(micLevel,0.1,1,1,4.5);
 
     drawPinkLine(i, t, size);
     drawBlueLine(i, t, size);
@@ -96,11 +79,11 @@ function drawLines(micLevel, t, grosor){
     drawPinkLine(i, t, size);
     drawBlueLine(i, t, size);
     rotate(HALF_PI);
-    drawPinkLine(i, t, size*0.2);
-    drawBlueLine(i, t, size*0.2);
+    drawPinkLine(i, t, size * litle_factor);
+    drawBlueLine(i, t, size * litle_factor);
     rotate(HALF_PI);
-    drawPinkLine(i, t, size*0.2);
-    drawBlueLine(i, t, size*0.2);
+    drawPinkLine(i, t, size * litle_factor);
+    drawBlueLine(i, t, size * litle_factor);
   }
 
   return t += VELOCITY;
@@ -113,36 +96,17 @@ function drawPinkLine(i, t, size){
 }
 
 function drawBlueLine(i, t, size){
-  stroke(0,150,360 * size);
+  stroke(0, 150, 360 * size);
   line(x1((t + i) * -1 ),y1((t + i) * -1),x2((t + i) * -1) * size ,y2((t + i) * -1) * size);
 }
-
-//dibujo circules
-function drawCircles(micLevel, xoff, evol){
-  var x = map(noise(xoff),0,1,0,width);
-  var y = map(micLevel,0,1,height,0);
-  console.log(y);
-  fill(random(255),random(255),random(255));
-  ellipse(x, y - 100/2, map(micLevel,0,1,100,300), map(micLevel,0,1,100,300));
-  //velocity of movement circle
-  return xoff += 0.01;
-}
-
-function drawObjective(){
-  fill(255,0,0);
-  ellipse(width/2, height/2 - 100/2, 150, 150);
-}
-
-
 function drawAbstractPaint(){
-  //noiseDetail(2, 0.2);
 
   var yoff = 0
   for(var y = 0; y < rows; y++){
     var coff = 0;
     for (var x = 0; x < cols; x++) {
       //en cada bloque se dibujará un vector con angulo.
-      var index = (x + y * width) * 4;
+      //var index = (x + y * width) * 4;
       var angle = noise(coff, yoff, zoff) * TWO_PI;
       var v = p5.Vector.fromAngle(angle);
       xoff += inc;
@@ -160,4 +124,21 @@ function drawAbstractPaint(){
     zoff += 0.001;  // velocidad de movimiento de los vectores.
     //t = drawLines(micLevel, t, 0.5);
   }
+}
+
+function x1(t){
+  return sin(t /10) * 100 + sin(t / 5) * 20;
+}
+
+function y1(t){
+  return cos(-t / 10) * 10 + sin(t / 5) * 50;
+}
+
+function x2(t){
+  //return sin(t / 10) * 200  + sin(t)* 2;
+  return sin(t / 10) * 200  + sin(t)* 20;
+}
+
+function y2(t){
+  return -cos(t / 20) * 200 + cos(t / 12) * 20;
 }

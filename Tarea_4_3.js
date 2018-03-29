@@ -8,7 +8,7 @@ var mic;
 var VELOCITY;
 var sw;
 var xoff = 0;
-var threshold = 0.1;
+var threshold = 0.7;
 var inc = 0.5; // nivel de random en noise.
 var scl = 7;
 var cols,rows;

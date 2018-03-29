@@ -8,7 +8,7 @@ var mic;
 var VELOCITY;
 var sw;
 var xoff = 0;
-var threshold = 0.5;
+var threshold = 0.1;
 var inc = 0.5; // nivel de random en noise.
 var scl = 7;
 var cols,rows;
@@ -114,7 +114,7 @@ function drawAbstractPaint(){
       stroke(map(noise(coff),0,1,0,255),map(noise(yoff),0,1,0,255),map(noise(zoff),0,1,0,255));
       //stroke(map(random(xoff),0,1,0,255),map(random(yoff),0,1,0,255),map(random(zoff),0,1,0,255),random(50,100));
       //push();
-      translate(x * scl, y * scl);
+      translate(x * scl + mapea_miclevel(), y * scl +  mapea_miclevel());
       rotate(v.heading());
       line(0, 0, scl * 20, 0);
       //pop();
@@ -141,4 +141,8 @@ function x2(t){
 
 function y2(t){
   return -cos(t / 20) * 200 + cos(t / 12) * 20;
+}
+
+function mapea_miclevel(){
+  return map(micLevel,0,1,0.1,0.7);
 }

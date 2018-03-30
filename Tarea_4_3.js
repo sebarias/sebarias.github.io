@@ -1,3 +1,13 @@
+/*
+
+The big bang
+Proyecto final del curso Progrmacación Creativa, introducción a P5.JS por CODED Escuela www.codedescuela.cl
+Usando las funciones random y noise
+Uso de P5.sound
+por Sebastián Arias "the jipi coder"
+*/
+
+
 var t;
 var NUM_LINES;
 var contador;

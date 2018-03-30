@@ -13,12 +13,12 @@ var inc = 0.5; // nivel de random en noise.
 var scl = 7;
 var cols,rows;
 var zoff = 0;
-var limit = 15;
+var limit = 8;
 var litle_factor = 0.1;
 
 
 function setup(){
-  createCanvas(600,600);
+  createCanvas(700,500);
   background(20);
   t = 0;
   NUM_LINES = 100;
